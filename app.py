@@ -13,6 +13,7 @@ the others. This is the Single Responsibility Principle in practice.
 import streamlit as st
 import pandas as pd
 import numpy as np
+import yfinance as yf
 
 # ── Page configuration ────────────────────────────────────────────────────────
 # Rationale: must be the first Streamlit call in the script.
@@ -256,7 +257,7 @@ if page == "📊 Market Overview":
         )
 
     with col2:
-        import yfinance as yf
+        
         # Fetch volume data for the universe
         raw = yf.download(
             all_tickers, period=period,
@@ -623,4 +624,3 @@ elif page == "🔍 Stock Screener":
         file_name="equity_screener_results.csv",
         mime="text/csv",
     )
-    
