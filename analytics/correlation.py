@@ -14,7 +14,6 @@ institutional portfolio construction today.
 
 import pandas as pd
 import numpy as np
-from scipy.optimize import minimize
 from data.fetcher import RISK_FREE_RATE
 
 
@@ -153,67 +152,21 @@ def generate_efficient_frontier(
 
 def find_optimal_portfolio(daily_returns: pd.DataFrame) -> dict:
     """
-    Find the portfolio with the maximum Sharpe ratio using optimisation.
+    Find the portfolio with the maximum Sharpe ratio from the
+    Monte Carlo simulation results.
 
-    Rationale: the maximum Sharpe ratio portfolio is called the
-    'tangency portfolio' or 'market portfolio' in Modern Portfolio Theory.
-    It represents the single best combination of risk and return —
-    the point on the efficient frontier that a rational investor
-    should hold (before adding or removing risk-free asset exposure).
-
-    This uses scipy's minimize() function with the SLSQP method
-    (Sequential Least Squares Programming) — an industry-standard
-    numerical optimisation algorithm.
-
-    Constraints:
-        1. Weights must sum to 1.0 (fully invested)
-        2. No short selling — each weight must be >= 0
-           Rationale: short selling requires special permissions and
-           adds complexity. Long-only constraint is realistic for
-           most portfolio managers.
-
-    Returns:
-        dict with optimal weights, expected return, volatility,
-        and Sharpe ratio
+    Rationale: instead of scipy optimisation, we find the best
+    portfolio from our 3,000 simulated ones — the one with the
+    highest Sharpe ratio. This is a robust approximation that
+    requires no external optimisation library.
     """
-    mean_returns = daily_returns.mean()
-    cov_matrix   = daily_returns.cov()
-    num_stocks   = len(daily_returns.columns)
-    tickers      = daily_returns.columns.tolist()
-
-    # We minimise NEGATIVE Sharpe ratio (scipy only minimises)
-    # Minimising -Sharpe is equivalent to maximising Sharpe
-    def negative_sharpe(weights):
-        ret, vol, sharpe = calculate_portfolio_metrics(
-            weights, mean_returns, cov_matrix
-        )
-        return -sharpe
-
-    # Constraint: weights must sum to 1
-    constraints = {"type": "eq", "fun": lambda w: np.sum(w) - 1}
-
-    # Bounds: each weight between 0 and 1 (no short selling)
-    bounds = tuple((0, 1) for _ in range(num_stocks))
-
-    # Initial guess: equal weights
-    initial_weights = np.array([1 / num_stocks] * num_stocks)
-
-    result = minimize(
-        negative_sharpe,
-        initial_weights,
-        method="SLSQP",
-        bounds=bounds,
-        constraints=constraints
-    )
-
-    optimal_weights = result.x
-    opt_return, opt_vol, opt_sharpe = calculate_portfolio_metrics(
-        optimal_weights, mean_returns, cov_matrix
-    )
-
+    frontier_df = generate_efficient_frontier(daily_returns, num_portfolios=5000)
+    best = frontier_df.loc[frontier_df["Sharpe"].idxmax()]
+    tickers = daily_returns.columns.tolist()
+    weights = {t: best[f"w_{t}"] for t in tickers}
     return {
-        "weights":    dict(zip(tickers, optimal_weights)),
-        "return":     opt_return,
-        "volatility": opt_vol,
-        "sharpe":     opt_sharpe,
+        "weights":    weights,
+        "return":     best["Return"],
+        "volatility": best["Volatility"],
+        "sharpe":     best["Sharpe"],
     }
