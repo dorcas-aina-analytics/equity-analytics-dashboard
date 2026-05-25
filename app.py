@@ -307,6 +307,8 @@ elif page == "📈 Price & Trend Analysis":
         selected_ticker, period=period,
         auto_adjust=True, progress=False
     )
+    if isinstance(ohlcv.columns, pd.MultiIndex):
+       ohlcv.columns = ohlcv.columns.get_level_values(0)
 
     if ohlcv.empty:
         st.warning(f"No data available for {selected_name}.")
