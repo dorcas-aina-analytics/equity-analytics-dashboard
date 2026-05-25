@@ -321,14 +321,15 @@ elif page == "📈 Price & Trend Analysis":
         latest_vol    = rolling_v.iloc[-1].values[0] \
                         if not rolling_v.empty else 0
 
+        current_price = float(ohlcv['Close'].iloc[-1])
         render_metric_cards({
-            "Current Price":  (
-                f"${ohlcv['Close'].iloc[-1]:.2f}"
-                if selected_ticker not in ["BARC.L", "HSBA.L",
-                    "SHEL.L", "BP.L", "AZN.L", "GSK.L",
-                    "ULVR.L", "TSCO.L"]
-                else f"£{ohlcv['Close'].iloc[-1]:.2f}", None
-            ),
+           "Current Price":  (
+              f"${current_price:.2f}"
+              if selected_ticker not in ["BARC.L", "HSBA.L",
+                 "SHEL.L", "BP.L", "AZN.L", "GSK.L",
+                 "ULVR.L", "TSCO.L"]
+              else f"£{current_price:.2f}", None
+        ),
             "YTD Return":    (
                 f"{ytd_ret.values[0]*100:.2f}%"
                 if not ytd_ret.empty else "N/A", None
