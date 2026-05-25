@@ -241,7 +241,7 @@ if page == "📊 Market Overview":
     ]
     st.plotly_chart(
         sector_heatmap(sector_df),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.divider()
@@ -253,7 +253,7 @@ if page == "📊 Market Overview":
         gainers, losers = get_top_movers(daily_returns, n=5)
         st.plotly_chart(
             top_movers_chart(gainers, losers),
-            use_container_width=True,
+            width="stretch",
         )
 
     with col2:
@@ -270,7 +270,7 @@ if page == "📊 Market Overview":
 
         st.plotly_chart(
             volume_trend_chart(vol_data),
-            use_container_width=True,
+            width="stretch",
         )
 
     st.divider()
@@ -347,7 +347,7 @@ elif page == "📈 Price & Trend Analysis":
 
         st.plotly_chart(
             candlestick_chart(ohlcv, selected_ticker),
-            use_container_width=True,
+            width="stretch",
         )
 
         # Moving average explanation
@@ -404,7 +404,7 @@ elif page == "⚡ Volatility & Risk":
     # Rolling volatility chart
     st.plotly_chart(
         rolling_volatility_chart(rolling_vol),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.divider()
@@ -420,7 +420,7 @@ elif page == "⚡ Volatility & Risk":
 
     st.plotly_chart(
         risk_metrics_bar(metrics_df),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.divider()
@@ -440,7 +440,7 @@ elif page == "⚡ Volatility & Risk":
         "Max Drawdown": [f"{v*100:.2f}%" for v in max_dd.values],
     }).sort_values("Max Drawdown").reset_index(drop=True)
 
-    st.dataframe(dd_df, use_container_width=True, hide_index=True)
+    st.dataframe(dd_df, width="stretch", hide_index=True)
 
     with st.expander("📖 Understanding these metrics"):
         st.markdown("""
@@ -474,7 +474,7 @@ elif page == "🔗 Correlation & Portfolio":
 
     st.plotly_chart(
         correlation_heatmap(corr_matrix),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.divider()
@@ -484,7 +484,7 @@ elif page == "🔗 Correlation & Portfolio":
 
     st.plotly_chart(
         cumulative_returns_chart(portfolio_vals),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.divider()
@@ -506,7 +506,7 @@ elif page == "🔗 Correlation & Portfolio":
 
     st.plotly_chart(
         efficient_frontier_chart(frontier_df, optimal),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.divider()
@@ -608,7 +608,7 @@ elif page == "🔍 Stock Screener":
     # Styled table
     st.dataframe(
         style_screener_table(ranked_df),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         height=500,
     )
