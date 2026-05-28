@@ -143,6 +143,22 @@ with st.sidebar:
 
     st.divider()
 
+    if st.button("🔄 Refresh Market Data", use_container_width=True):
+        st.cache_data.clear()
+        st.rerun()
+
+    from datetime import datetime
+    import pytz
+    london_tz = pytz.timezone("Europe/London")
+    now_london = datetime.now(london_tz)
+    st.markdown(
+        f"<p style='color:#94A3B8; font-size:11px; margin-top:8px;'>"
+        f"Last refreshed: {now_london.strftime('%d %b %Y %H:%M')} GMT</p>",
+        unsafe_allow_html=True,
+    )
+
+    st.divider()
+
     st.markdown(
         """
         <div style='color:#94A3B8; font-size:11px; line-height:1.6;'>
